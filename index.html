@@ -36,15 +36,55 @@
       text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
 
+    /* ===== Estilos responsivos para móviles ===== */
     @media (max-width: 768px) {
-      body {
-        transform: scale(1.5);
-        transform-origin: top left;
+      html {
+        font-size: 16px; /* Ajustar tamaño base */
+      }
+
+      .main-content {
+        padding: 15px;
+        font-size: 0.9em;
+      }
+
+      .mixer-panel h3 {
+        font-size: 1.2em;
+      }
+
+      .color-selector label,
+      .slider-group label {
+        font-size: 0.9em;
+      }
+
+      .slider-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .slider {
         width: 100%;
-        overflow: hidden;
+      }
+
+      .preset-grid {
+        grid-template-columns: repeat(2, 1fr); /* Mostrar 2 col en móvil */
+      }
+
+      .buttons {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .tooltip-copy {
+        bottom: 10px;
+        right: 10px;
+        font-size: 0.8em;
       }
     }
 
+    /* ===== Estilos generales ===== */
     .main-content {
       display: grid;
       grid-template-columns: 1fr;
@@ -268,11 +308,6 @@
     .tooltip-copy.show {
       opacity: 1;
     }
-    @media (max-width: 768px) {
-      .main-content {
-        padding: 20px;
-      }
-    }
   </style>
 </head>
 <body>
@@ -344,10 +379,8 @@
             <span class="slider-value" id="saturationValue">0</span>
           </div>
         </div>
-
         <!-- Vista previa del color -->
         <div class="color-preview" id="colorPreview"></div>
-
         <!-- Valores del color -->
         <div class="color-info">
           <h4>Valores de Color:</h4>
@@ -370,19 +403,16 @@
             </div>
           </div>
         </div>
-
         <!-- Grises preestablecidos -->
         <div class="preset-grays">
           <h4>Grises Preestablecidos:</h4>
           <div class="preset-grid" id="presetGrid"></div>
         </div>
-
         <!-- Botones Aleatorio y Restablecer -->
         <div class="buttons">
           <button class="btn btn-primary" onclick="randomizeSettings()">🎲 Aleatorio</button>
           <button class="btn btn-secondary" onclick="resetSettings()">🔄 Restablecer</button>
         </div>
-
         <!-- Consejos para mezclar colores -->
         <div class="tips-inline">
           <h3>💡 Consejos para Mezclar Colores</h3>
@@ -398,10 +428,8 @@
       </div>
     </div>
   </div>
-
   <!-- Tooltip de copiado -->
   <div id="copyTooltip" class="tooltip-copy">Copiado</div>
-
   <script>
     const grayData = {
       'warm-light': { r: 210, g: 208, b: 200 },
@@ -429,7 +457,6 @@
       'orange': { r: 255, g: 165, b: 0 },
       'violet': { r: 138, g: 43, b: 226 }
     };
-
     function init() {
       updateSliderValues();
       updateColorPreview();
@@ -441,7 +468,6 @@
       document.getElementById('brightness').addEventListener('input', updateSliderValues);
       document.getElementById('saturation').addEventListener('input', updateSliderValues);
     }
-
     function updateSliderValues() {
       document.getElementById('baseIntensityValue').textContent = document.getElementById('baseIntensity').value + '%';
       document.getElementById('grayIntensityValue').textContent = document.getElementById('grayIntensity').value + '%';
@@ -449,7 +475,6 @@
       document.getElementById('saturationValue').textContent = document.getElementById('saturation').value;
       updateColorPreview();
     }
-
     function updateColorPreview() {
       const baseColor = document.getElementById('baseColor').value;
       const grayType = document.getElementById('grayType').value;
@@ -461,7 +486,6 @@
       document.getElementById('colorPreview').style.backgroundColor = `rgb(${mixedColor.r}, ${mixedColor.g}, ${mixedColor.b})`;
       updateColorValues(mixedColor);
     }
-
     function mixColors(baseColorKey, grayTypeKey, baseIntensity, grayIntensity, brightness, saturation) {
       const baseColor = baseColors[baseColorKey];
       const grayColor = grayData[grayTypeKey];
@@ -481,7 +505,6 @@
       b = Math.max(0, Math.min(255, gray + (b - gray) * (1 + saturationFactor)));
       return { r: Math.round(r), g: Math.round(g), b: Math.round(b) };
     }
-
     function updateColorValues(color) {
       const hex = '#' + [color.r, color.g, color.b].map(x => x.toString(16).padStart(2, '0')).join('');
       document.getElementById('hexValue').textContent = hex;
@@ -491,7 +514,6 @@
       const hsv = rgbToHsv(color.r, color.g, color.b);
       document.getElementById('hsvValue').textContent = `${Math.round(hsv.h)}°, ${Math.round(hsv.s)}%, ${Math.round(hsv.v)}%`;
     }
-
     function rgbToHsl(r, g, b) {
       r /= 255; g /= 255; b /= 255;
       const max = Math.max(r, g, b);
@@ -511,7 +533,6 @@
       }
       return { h: h * 360, s: s * 100, l: l * 100 };
     }
-
     function rgbToHsv(r, g, b) {
       r /= 255; g /= 255; b /= 255;
       const max = Math.max(r, g, b);
@@ -530,7 +551,6 @@
       const s = max === 0 ? 0 : d / max;
       return { h: h * 360, s: s * 100, v: max * 100 };
     }
-
     function generatePresets() {
       const presetGrid = document.getElementById('presetGrid');
       presetGrid.innerHTML = '';
@@ -545,7 +565,6 @@
         presetGrid.appendChild(presetItem);
       });
     }
-
     function getGrayName(grayType) {
       const names = {
         'warm-light': 'Cálido Claro',
@@ -567,7 +586,6 @@
       };
       return names[grayType] || grayType;
     }
-
     function loadPreset(grayType) {
       document.getElementById('grayType').value = grayType;
       document.getElementById('baseIntensity').value = 30;
@@ -576,7 +594,6 @@
       document.getElementById('saturation').value = 0;
       updateSliderValues();
     }
-
     function randomizeSettings() {
       const baseColors = ['red', 'yellow', 'blue', 'green', 'orange', 'violet'];
       const grayTypes = Object.keys(grayData);
@@ -588,7 +605,6 @@
       document.getElementById('saturation').value = Math.floor(Math.random() * 101) - 50;
       updateSliderValues();
     }
-
     function resetSettings() {
       document.getElementById('baseColor').value = 'red';
       document.getElementById('grayType').value = 'neutral-medium';
@@ -598,7 +614,6 @@
       document.getElementById('saturation').value = 0;
       updateSliderValues();
     }
-
     // Copiar texto al hacer clic
     function copyText(id) {
       const text = document.getElementById(id).textContent;
@@ -609,7 +624,6 @@
         setTimeout(() => tooltip.classList.remove('show'), 1500);
       }).catch(err => alert("Error al copiar: " + err));
     }
-
     window.onload = init;
   </script>
 </body>
