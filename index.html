@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mezclador de Grises Cromáticos</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    .header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .header p {
+      font-size: 1.1em;
+      opacity: 0.9;
+    }
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      padding: 30px;
+    }
+    .mixer-panel {
+      background: #f8f9fa;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+    }
+    .mixer-panel h3 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      font-size: 1.4em;
+      border-bottom: 3px solid #3498db;
+      padding-bottom: 10px;
+    }
+    .color-selector {
+      margin-bottom: 20px;
+    }
+    .color-selector label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .color-selector select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 1em;
+      background: white;
+      transition: border-color 0.3s;
+    }
+    .slider-group {
+      margin-bottom: 20px;
+    }
+    .slider-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .slider {
+      flex: 1;
+      height: 8px;
+      border-radius: 5px;
+      background: #e0e0e0;
+      outline: none;
+    }
+    .slider::-webkit-slider-thumb {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #3498db;
+      cursor: pointer;
+    }
+    .slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #3498db;
+      cursor: pointer;
+    }
+    .slider-value {
+      min-width: 40px;
+      text-align: center;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .result-panel {
+      background: #f8f9fa;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .result-panel h3 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      font-size: 1.4em;
+      border-bottom: 3px solid #e74c3c;
+      padding-bottom: 10px;
+    }
+    .color-preview {
+      width: 100%;
+      height: 200px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      border: 3px solid #ddd;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .color-info {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .color-values {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+    }
+    .color-value {
+      background: #f8f9fa;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid #e0e0e0;
+      cursor: pointer;
+      user-select: none;
+    }
+    .color-value strong {
+      display: block;
+      color: #2c3e50;
+      font-size: 0.9em;
+    }
+    .color-value span {
+      font-family: monospace;
+      font-size: 0.8em;
+      color: #7f8c8d;
+    }
+    .preset-grays {
+      margin-top: 20px;
+    }
+    .preset-grays h4 {
+      color: #2c3e50;
+      margin-bottom: 15px;
+      font-size: 1.1em;
+    }
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 10px;
+    }
+    .preset-item {
+      background: white;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 2px solid #e0e0e0;
+    }
+    .preset-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    .preset-color {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin: 0 auto 8px;
+      border: 2px solid #ddd;
+    }
+    .preset-name {
+      font-size: 0.8em;
+      color: #2c3e50;
+      font-weight: 600;
+    }
+    .buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .btn {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 600;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: white;
+    }
+    .btn-secondary {
+      background: #95a5a6;
+      color: white;
+    }
+    .tips-inline {
+      background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+    .tips-inline h3 {
+      margin-bottom: 10px;
+      font-size: 1.1em;
+    }
+    .tips-inline ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+    .tips-inline li {
+      padding: 5px 0;
+      padding-left: 20px;
+      position: relative;
+      font-size: 0.9em;
+    }
+    .tips-inline li:before {
+      content: "💡";
+      position: absolute;
+      left: 0;
+    }
+    .tooltip-copy {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #2ecc71;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 5px;
+      font-size: 0.9em;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      z-index: 1000;
+    }
+    .tooltip-copy.show {
+      opacity: 1;
+    }
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎨 Mezclador de Grises Cromáticos</h1>
+      <p>Experimenta con diferentes combinaciones de colores base y grises para crear tonos únicos</p>
+    </div>
+    <div class="main-content">
+      <!-- Panel de mezcla -->
+      <div class="mixer-panel">
+        <h3>🎛️ Configuración del Mezclador</h3>
+        <div class="color-selector">
+          <label for="baseColor">Color Base:</label>
+          <select id="baseColor">
+            <option value="red">🔴 Rojo</option>
+            <option value="yellow">🟡 Amarillo</option>
+            <option value="blue">🔵 Azul</option>
+            <option value="green">🟢 Verde</option>
+            <option value="orange">🟠 Naranja</option>
+            <option value="violet">🟣 Violeta</option>
+          </select>
+        </div>
+        <div class="color-selector">
+          <label for="grayType">Tipo de Gris:</label>
+          <select id="grayType">
+            <option value="warm-light">Gris Cálido Claro</option>
+            <option value="warm-medium">Gris Cálido Medio</option>
+            <option value="warm-dark">Gris Cálido Oscuro</option>
+            <option value="cool-light">Gris Frío Claro</option>
+            <option value="cool-medium">Gris Frío Medio</option>
+            <option value="cool-dark">Gris Frío Oscuro</option>
+            <option value="neutral-light">Gris Neutro Claro</option>
+            <option value="neutral-medium">Gris Neutro Medio</option>
+            <option value="neutral-dark">Gris Neutro Oscuro</option>
+            <option value="vibrant-light">Gris Vibrante Claro</option>
+            <option value="vibrant-medium">Gris Vibrante Medio</option>
+            <option value="vibrant-dark">Gris Vibrante Oscuro</option>
+            <option value="muted-light">Gris Apagado Claro</option>
+            <option value="muted-medium">Gris Apagado Medio</option>
+            <option value="muted-dark">Gris Apagado Oscuro</option>
+            <option value="atmospheric">Gris Atmosférico</option>
+          </select>
+        </div>
+        <div class="slider-group">
+          <label>Intensidad del Color Base:</label>
+          <div class="slider-container">
+            <input type="range" id="baseIntensity" class="slider" min="0" max="100" value="50" />
+            <span class="slider-value" id="baseIntensityValue">50%</span>
+          </div>
+        </div>
+        <div class="slider-group">
+          <label>Intensidad del Gris:</label>
+          <div class="slider-container">
+            <input type="range" id="grayIntensity" class="slider" min="0" max="100" value="50" />
+            <span class="slider-value" id="grayIntensityValue">50%</span>
+          </div>
+        </div>
+        <div class="slider-group">
+          <label>Brillo:</label>
+          <div class="slider-container">
+            <input type="range" id="brightness" class="slider" min="-50" max="50" value="0" />
+            <span class="slider-value" id="brightnessValue">0</span>
+          </div>
+        </div>
+        <div class="slider-group">
+          <label>Saturación:</label>
+          <div class="slider-container">
+            <input type="range" id="saturation" class="slider" min="-50" max="50" value="0" />
+            <span class="slider-value" id="saturationValue">0</span>
+          </div>
+        </div>
+        <div class="buttons">
+          <button class="btn btn-primary" onclick="randomizeSettings()">🎲 Aleatorio</button>
+          <button class="btn btn-secondary" onclick="resetSettings()">🔄 Restablecer</button>
+        </div>
+
+        <!-- Consejos dentro del panel -->
+        <div class="tips-inline">
+          <h3>💡 Consejos para Mezclar Colores</h3>
+          <ul>
+            <li>Los grises cálidos funcionan mejor con rojos, amarillos y naranjas</li>
+            <li>Los grises fríos complementan azules, verdes y violetas</li>
+            <li>Usa intensidades bajas para efectos sutiles</li>
+            <li>Combina grises atmosféricos con cualquier color base</li>
+            <li>Experimenta con el brillo para crear profundidad</li>
+            <li>La saturación baja crea efectos más naturales</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Resultado -->
+      <div class="result-panel">
+        <h3>🎯 Resultado</h3>
+        <div class="color-preview" id="colorPreview"></div>
+        <div class="color-info">
+          <h4>Valores de Color:</h4>
+          <div class="color-values">
+            <div class="color-value" onclick="copyText('hexValue')">
+              <strong>HEX</strong>
+              <span id="hexValue">#808080</span>
+            </div>
+            <div class="color-value" onclick="copyText('rgbValue')">
+              <strong>RGB</strong>
+              <span id="rgbValue">128, 128, 128</span>
+            </div>
+            <div class="color-value" onclick="copyText('hslValue')">
+              <strong>HSL</strong>
+              <span id="hslValue">0°, 0%, 50%</span>
+            </div>
+            <div class="color-value" onclick="copyText('hsvValue')">
+              <strong>HSV</strong>
+              <span id="hsvValue">0°, 0%, 50%</span>
+            </div>
+          </div>
+        </div>
+        <div class="preset-grays">
+          <h4>Grises Preestablecidos:</h4>
+          <div class="preset-grid" id="presetGrid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tooltip de copiado -->
+  <div id="copyTooltip" class="tooltip-copy">Copiado</div>
+
+  <script>
+    const grayData = {
+      'warm-light': { r: 210, g: 208, b: 200 },
+      'warm-medium': { r: 160, g: 155, b: 145 },
+      'warm-dark': { r: 100, g: 95, b: 85 },
+      'cool-light': { r: 200, g: 208, b: 210 },
+      'cool-medium': { r: 145, g: 155, b: 160 },
+      'cool-dark': { r: 85, g: 95, b: 100 },
+      'neutral-light': { r: 205, g: 205, b: 205 },
+      'neutral-medium': { r: 128, g: 128, b: 128 },
+      'neutral-dark': { r: 80, g: 80, b: 80 },
+      'vibrant-light': { r: 215, g: 200, b: 185 },
+      'vibrant-medium': { r: 140, g: 130, b: 120 },
+      'vibrant-dark': { r: 90, g: 85, b: 75 },
+      'muted-light': { r: 195, g: 200, b: 195 },
+      'muted-medium': { r: 135, g: 140, b: 135 },
+      'muted-dark': { r: 75, g: 80, b: 75 },
+      'atmospheric': { r: 180, g: 185, b: 190 }
+    };
+
+    const baseColors = {
+      'red': { r: 255, g: 0, b: 0 },
+      'yellow': { r: 255, g: 255, b: 0 },
+      'blue': { r: 0, g: 0, b: 255 },
+      'green': { r: 0, g: 255, b: 0 },
+      'orange': { r: 255, g: 165, b: 0 },
+      'violet': { r: 138, g: 43, b: 226 }
+    };
+
+    function init() {
+      updateSliderValues();
+      updateColorPreview();
+      generatePresets();
+
+      document.getElementById('baseColor').addEventListener('change', updateColorPreview);
+      document.getElementById('grayType').addEventListener('change', updateColorPreview);
+      document.getElementById('baseIntensity').addEventListener('input', updateSliderValues);
+      document.getElementById('grayIntensity').addEventListener('input', updateSliderValues);
+      document.getElementById('brightness').addEventListener('input', updateSliderValues);
+      document.getElementById('saturation').addEventListener('input', updateSliderValues);
+    }
+
+    function updateSliderValues() {
+      document.getElementById('baseIntensityValue').textContent = document.getElementById('baseIntensity').value + '%';
+      document.getElementById('grayIntensityValue').textContent = document.getElementById('grayIntensity').value + '%';
+      document.getElementById('brightnessValue').textContent = document.getElementById('brightness').value;
+      document.getElementById('saturationValue').textContent = document.getElementById('saturation').value;
+      updateColorPreview();
+    }
+
+    function updateColorPreview() {
+      const baseColor = document.getElementById('baseColor').value;
+      const grayType = document.getElementById('grayType').value;
+      const baseIntensity = parseInt(document.getElementById('baseIntensity').value);
+      const grayIntensity = parseInt(document.getElementById('grayIntensity').value);
+      const brightness = parseInt(document.getElementById('brightness').value);
+      const saturation = parseInt(document.getElementById('saturation').value);
+
+      const mixedColor = mixColors(baseColor, grayType, baseIntensity, grayIntensity, brightness, saturation);
+      document.getElementById('colorPreview').style.backgroundColor = `rgb(${mixedColor.r}, ${mixedColor.g}, ${mixedColor.b})`;
+      updateColorValues(mixedColor);
+    }
+
+    function mixColors(baseColorKey, grayTypeKey, baseIntensity, grayIntensity, brightness, saturation) {
+      const baseColor = baseColors[baseColorKey];
+      const grayColor = grayData[grayTypeKey];
+
+      const baseWeight = baseIntensity / 100;
+      const grayWeight = grayIntensity / 100;
+
+      let r = (baseColor.r * baseWeight + grayColor.r * grayWeight) / (baseWeight + grayWeight);
+      let g = (baseColor.g * baseWeight + grayColor.g * grayWeight) / (baseWeight + grayWeight);
+      let b = (baseColor.b * baseWeight + grayColor.b * grayWeight) / (baseWeight + grayWeight);
+
+      const brightnessFactor = brightness / 100;
+      r = Math.max(0, Math.min(255, r + (255 - r) * brightnessFactor));
+      g = Math.max(0, Math.min(255, g + (255 - g) * brightnessFactor));
+      b = Math.max(0, Math.min(255, b + (255 - b) * brightnessFactor));
+
+      const gray = (r + g + b) / 3;
+      const saturationFactor = saturation / 100;
+      r = Math.max(0, Math.min(255, gray + (r - gray) * (1 + saturationFactor)));
+      g = Math.max(0, Math.min(255, gray + (g - gray) * (1 + saturationFactor)));
+      b = Math.max(0, Math.min(255, gray + (b - gray) * (1 + saturationFactor)));
+
+      return { r: Math.round(r), g: Math.round(g), b: Math.round(b) };
+    }
+
+    function updateColorValues(color) {
+      const hex = '#' + [color.r, color.g, color.b].map(x => x.toString(16).padStart(2, '0')).join('');
+      document.getElementById('hexValue').textContent = hex;
+      document.getElementById('rgbValue').textContent = `${color.r}, ${color.g}, ${color.b}`;
+      const hsl = rgbToHsl(color.r, color.g, color.b);
+      document.getElementById('hslValue').textContent = `${Math.round(hsl.h)}°, ${Math.round(hsl.s)}%, ${Math.round(hsl.l)}%`;
+      const hsv = rgbToHsv(color.r, color.g, color.b);
+      document.getElementById('hsvValue').textContent = `${Math.round(hsv.h)}°, ${Math.round(hsv.s)}%, ${Math.round(hsv.v)}%`;
+    }
+
+    function rgbToHsl(r, g, b) {
+      r /= 255; g /= 255; b /= 255;
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      let h, s, l = (max + min) / 2;
+      if (max === min) h = s = 0;
+      else {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case r: h = (g - b) / 6 / ((max - min) || 1); break;
+          case g: h = (b - r) / 6 / ((max - min) || 1) + 1/3; break;
+          case b: h = (r - g) / 6 / ((max - min) || 1) + 2/3; break;
+        }
+        if (h < 0) h += 1;
+        if (h > 1) h -= 1;
+      }
+      return { h: h * 360, s: s * 100, l: l * 100 };
+    }
+
+    function rgbToHsv(r, g, b) {
+      r /= 255; g /= 255; b /= 255;
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      const d = max - min;
+      let h;
+      if (max === min) h = 0;
+      else {
+        switch (max) {
+          case r: h = (g - b) / 6 / d + (g < b ? 1 : 0); break;
+          case g: h = (b - r) / 6 / d + 1/3; break;
+          case b: h = (r - g) / 6 / d + 2/3; break;
+        }
+        h = (h + 1) % 1;
+      }
+      const s = max === 0 ? 0 : d / max;
+      return { h: h * 360, s: s * 100, v: max * 100 };
+    }
+
+    function generatePresets() {
+      const presetGrid = document.getElementById('presetGrid');
+      presetGrid.innerHTML = '';
+      Object.keys(grayData).forEach(grayType => {
+        const grayColor = grayData[grayType];
+        const presetItem = document.createElement('div');
+        presetItem.className = 'preset-item';
+        presetItem.onclick = () => loadPreset(grayType);
+        presetItem.innerHTML = `
+          <div class="preset-color" style="background-color: rgb(${grayColor.r}, ${grayColor.g}, ${grayColor.b})"></div>
+          <div class="preset-name">${getGrayName(grayType)}</div>`;
+        presetGrid.appendChild(presetItem);
+      });
+    }
+
+    function getGrayName(grayType) {
+      const names = {
+        'warm-light': 'Cálido Claro',
+        'warm-medium': 'Cálido Medio',
+        'warm-dark': 'Cálido Oscuro',
+        'cool-light': 'Frío Claro',
+        'cool-medium': 'Frío Medio',
+        'cool-dark': 'Frío Oscuro',
+        'neutral-light': 'Neutro Claro',
+        'neutral-medium': 'Neutro Medio',
+        'neutral-dark': 'Neutro Oscuro',
+        'vibrant-light': 'Vibrante Claro',
+        'vibrant-medium': 'Vibrante Medio',
+        'vibrant-dark': 'Vibrante Oscuro',
+        'muted-light': 'Apagado Claro',
+        'muted-medium': 'Apagado Medio',
+        'muted-dark': 'Apagado Oscuro',
+        'atmospheric': 'Atmosférico'
+      };
+      return names[grayType] || grayType;
+    }
+
+    function loadPreset(grayType) {
+      document.getElementById('grayType').value = grayType;
+      document.getElementById('baseIntensity').value = 30;
+      document.getElementById('grayIntensity').value = 70;
+      document.getElementById('brightness').value = 0;
+      document.getElementById('saturation').value = 0;
+      updateSliderValues();
+    }
+
+    function randomizeSettings() {
+      const baseColors = ['red', 'yellow', 'blue', 'green', 'orange', 'violet'];
+      const grayTypes = Object.keys(grayData);
+      document.getElementById('baseColor').value = baseColors[Math.floor(Math.random() * baseColors.length)];
+      document.getElementById('grayType').value = grayTypes[Math.floor(Math.random() * grayTypes.length)];
+      document.getElementById('baseIntensity').value = Math.floor(Math.random() * 101);
+      document.getElementById('grayIntensity').value = Math.floor(Math.random() * 101);
+      document.getElementById('brightness').value = Math.floor(Math.random() * 101) - 50;
+      document.getElementById('saturation').value = Math.floor(Math.random() * 101) - 50;
+      updateSliderValues();
+    }
+
+    function resetSettings() {
+      document.getElementById('baseColor').value = 'red';
+      document.getElementById('grayType').value = 'neutral-medium';
+      document.getElementById('baseIntensity').value = 50;
+      document.getElementById('grayIntensity').value = 50;
+      document.getElementById('brightness').value = 0;
+      document.getElementById('saturation').value = 0;
+      updateSliderValues();
+    }
+
+    // Copiar texto al hacer clic
+    function copyText(id) {
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const tooltip = document.getElementById('copyTooltip');
+        tooltip.textContent = `Copiado: ${text}`;
+        tooltip.classList.add('show');
+        setTimeout(() => tooltip.classList.remove('show'), 1500);
+      }).catch(err => alert("Error al copiar: " + err));
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>
