@@ -5,30 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mezclador de Grises Cromáticos</title>
   <style>
-    html {
-      font-size: 18px; /* Tamaño base aumentado un 50% */
-    }
-
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       padding: 20px;
     }
-
     .container {
-      max-width: 1400px;
+      max-width: 1120px; /* 20% menos que 1400 */
       margin: 0 auto;
       background: white;
       border-radius: 20px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.1);
       overflow: hidden;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        max-width: 90%;
+        padding: 10px;
+      }
+      .main-content {
+        padding: 15px;
+        font-size: 0.9em;
+      }
+      .slider-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .slider {
+        width: 100%;
+      }
+      .preset-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .tooltip-copy {
+        bottom: 10px;
+        right: 10px;
+        font-size: 0.8em;
+      }
     }
 
     .header {
@@ -37,90 +57,75 @@
       padding: 30px;
       text-align: center;
     }
-
     .header h1 {
-      font-size: 3.75em; /* 2.5em × 1.5 */
-      margin-bottom: 15px;
+      font-size: 2.5em;
+      margin-bottom: 10px;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    }
-
-    @media (max-width: 768px) {
-      html {
-        font-size: 24px; /* En móviles aún más grande */
-      }
-      .main-content {
-        padding: 20px;
-      }
-      .tooltip-copy {
-        font-size: 1.2em;
-      }
     }
 
     .main-content {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 45px;
-      padding: 45px;
+      gap: 30px;
+      padding: 30px;
     }
 
     .mixer-panel {
       background: #f8f9fa;
       border-radius: 15px;
-      padding: 38px;
+      padding: 25px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
 
     .mixer-panel h3 {
       color: #2c3e50;
-      margin-bottom: 30px;
-      font-size: 2.1em;
+      margin-bottom: 20px;
+      font-size: 1.4em;
       border-bottom: 3px solid #3498db;
-      padding-bottom: 15px;
+      padding-bottom: 10px;
     }
 
     .color-selector {
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
 
     .color-selector label {
       display: block;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       font-weight: 600;
       color: #2c3e50;
-      font-size: 1.35em;
     }
 
     .color-selector select {
       width: 100%;
-      padding: 18px;
+      padding: 12px;
       border: 2px solid #e0e0e0;
       border-radius: 10px;
-      font-size: 1.5em;
+      font-size: 1em;
       background: white;
       transition: border-color 0.3s;
     }
 
     .slider-group {
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
 
     .slider-group label {
       display: block;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       font-weight: 600;
       color: #2c3e50;
-      font-size: 1.35em;
     }
 
     .slider-container {
       display: flex;
       align-items: center;
-      gap: 22px;
+      gap: 15px;
     }
 
     .slider {
       flex: 1;
-      height: 12px;
+      height: 8px;
       border-radius: 5px;
       background: #e0e0e0;
       outline: none;
@@ -128,34 +133,33 @@
 
     .slider::-webkit-slider-thumb {
       appearance: none;
-      width: 30px;
-      height: 30px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       background: #3498db;
       cursor: pointer;
     }
 
     .slider::-moz-range-thumb {
-      width: 30px;
-      height: 30px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       background: #3498db;
       cursor: pointer;
     }
 
     .slider-value {
-      min-width: 60px;
+      min-width: 40px;
       text-align: center;
       font-weight: 600;
       color: #2c3e50;
-      font-size: 1.35em;
     }
 
     .color-preview {
       width: 100%;
-      height: 300px;
+      height: 200px;
       border-radius: 15px;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       border: 3px solid #ddd;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
@@ -163,20 +167,20 @@
     .color-info {
       background: white;
       border-radius: 10px;
-      padding: 30px;
-      margin-bottom: 22px;
+      padding: 20px;
+      margin-bottom: 15px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
     .color-values {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 15px;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
     }
 
     .color-value {
       background: #f8f9fa;
-      padding: 15px;
+      padding: 10px;
       border-radius: 8px;
       text-align: center;
       border: 1px solid #e0e0e0;
@@ -187,35 +191,35 @@
     .color-value strong {
       display: block;
       color: #2c3e50;
-      font-size: 1.35em;
+      font-size: 0.9em;
     }
 
     .color-value span {
       font-family: monospace;
-      font-size: 1.2em;
+      font-size: 0.8em;
       color: #7f8c8d;
     }
 
     .preset-grays {
-      margin-top: 30px;
+      margin-top: 20px;
     }
 
     .preset-grays h4 {
       color: #2c3e50;
-      margin-bottom: 22px;
-      font-size: 1.65em;
+      margin-bottom: 15px;
+      font-size: 1.1em;
     }
 
     .preset-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 15px;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* Ajustado para móvil */
+      gap: 10px;
     }
 
     .preset-item {
       background: white;
       border-radius: 10px;
-      padding: 15px;
+      padding: 10px;
       text-align: center;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
@@ -223,36 +227,36 @@
     }
 
     .preset-item:hover {
-      transform: translateY(-3px);
+      transform: translateY(-2px);
       box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
 
     .preset-color {
-      width: 90px;
-      height: 90px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
-      margin: 0 auto 12px;
+      margin: 0 auto 8px;
       border: 2px solid #ddd;
     }
 
     .preset-name {
-      font-size: 1.2em;
+      font-size: 0.8em;
       color: #2c3e50;
       font-weight: 600;
     }
 
     .buttons {
       display: flex;
-      gap: 22px;
-      margin-top: 30px;
+      gap: 15px;
+      margin-top: 20px;
     }
 
     .btn {
       flex: 1;
-      padding: 18px 30px;
+      padding: 12px 20px;
       border: none;
       border-radius: 10px;
-      font-size: 1.5em;
+      font-size: 1em;
       cursor: pointer;
       transition: all 0.3s;
       font-weight: 600;
@@ -271,14 +275,14 @@
     .tips-inline {
       background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
       color: white;
-      padding: 22px;
+      padding: 15px;
       border-radius: 10px;
-      margin-top: 30px;
+      margin-top: 20px;
     }
 
     .tips-inline h3 {
-      margin-bottom: 15px;
-      font-size: 1.65em;
+      margin-bottom: 10px;
+      font-size: 1.1em;
     }
 
     .tips-inline ul {
@@ -288,10 +292,10 @@
     }
 
     .tips-inline li {
-      padding: 7px 0;
-      padding-left: 30px;
+      padding: 5px 0;
+      padding-left: 20px;
       position: relative;
-      font-size: 1.35em;
+      font-size: 0.9em;
     }
 
     .tips-inline li:before {
@@ -306,9 +310,9 @@
       right: 20px;
       background: #2ecc71;
       color: white;
-      padding: 12px 24px;
+      padding: 8px 16px;
       border-radius: 5px;
-      font-size: 1.35em;
+      font-size: 0.9em;
       opacity: 0;
       transition: opacity 0.3s ease;
       pointer-events: none;
@@ -329,6 +333,7 @@
       <!-- Panel de mezcla -->
       <div class="mixer-panel">
         <h3>🎛️ Configuración del Mezclador</h3>
+
         <div class="color-selector">
           <label for="baseColor">Color Base:</label>
           <select id="baseColor">
@@ -340,6 +345,7 @@
             <option value="violet">🟣 Violeta</option>
           </select>
         </div>
+
         <div class="color-selector">
           <label for="grayType">Tipo de Gris:</label>
           <select id="grayType">
@@ -361,6 +367,7 @@
             <option value="atmospheric">Gris Atmosférico</option>
           </select>
         </div>
+
         <div class="slider-group">
           <label>Intensidad del Color Base:</label>
           <div class="slider-container">
@@ -368,6 +375,7 @@
             <span class="slider-value" id="baseIntensityValue">50%</span>
           </div>
         </div>
+
         <div class="slider-group">
           <label>Intensidad del Gris:</label>
           <div class="slider-container">
@@ -375,6 +383,7 @@
             <span class="slider-value" id="grayIntensityValue">50%</span>
           </div>
         </div>
+
         <div class="slider-group">
           <label>Brillo:</label>
           <div class="slider-container">
@@ -382,6 +391,7 @@
             <span class="slider-value" id="brightnessValue">0</span>
           </div>
         </div>
+
         <div class="slider-group">
           <label>Saturación:</label>
           <div class="slider-container">
@@ -389,8 +399,10 @@
             <span class="slider-value" id="saturationValue">0</span>
           </div>
         </div>
+
         <!-- Vista previa del color -->
         <div class="color-preview" id="colorPreview"></div>
+
         <!-- Valores del color -->
         <div class="color-info">
           <h4>Valores de Color:</h4>
@@ -413,17 +425,20 @@
             </div>
           </div>
         </div>
+
         <!-- Grises preestablecidos -->
         <div class="preset-grays">
           <h4>Grises Preestablecidos:</h4>
           <div class="preset-grid" id="presetGrid"></div>
         </div>
+
         <!-- Botones Aleatorio y Restablecer -->
         <div class="buttons">
           <button class="btn btn-primary" onclick="randomizeSettings()">🎲 Aleatorio</button>
           <button class="btn btn-secondary" onclick="resetSettings()">🔄 Restablecer</button>
         </div>
-        <!-- Consejos para mezclar colores -->
+
+        <!-- Consejos -->
         <div class="tips-inline">
           <h3>💡 Consejos para Mezclar Colores</h3>
           <ul>
@@ -461,6 +476,7 @@
       'muted-dark': { r: 75, g: 80, b: 75 },
       'atmospheric': { r: 180, g: 185, b: 190 }
     };
+
     const baseColors = {
       'red': { r: 255, g: 0, b: 0 },
       'yellow': { r: 255, g: 255, b: 0 },
@@ -474,6 +490,7 @@
       updateSliderValues();
       updateColorPreview();
       generatePresets();
+
       document.getElementById('baseColor').addEventListener('change', updateColorPreview);
       document.getElementById('grayType').addEventListener('change', updateColorPreview);
       document.getElementById('baseIntensity').addEventListener('input', updateSliderValues);
@@ -491,13 +508,14 @@
     }
 
     function updateColorPreview() {
-      const baseColor = document.getElementById('baseColor').value;
-      const grayType = document.getElementById('grayType').value;
+      const baseColorKey = document.getElementById('baseColor').value;
+      const grayTypeKey = document.getElementById('grayType').value;
       const baseIntensity = parseInt(document.getElementById('baseIntensity').value);
       const grayIntensity = parseInt(document.getElementById('grayIntensity').value);
       const brightness = parseInt(document.getElementById('brightness').value);
       const saturation = parseInt(document.getElementById('saturation').value);
-      const mixedColor = mixColors(baseColor, grayType, baseIntensity, grayIntensity, brightness, saturation);
+
+      const mixedColor = mixColors(baseColorKey, grayTypeKey, baseIntensity, grayIntensity, brightness, saturation);
       document.getElementById('colorPreview').style.backgroundColor = `rgb(${mixedColor.r}, ${mixedColor.g}, ${mixedColor.b})`;
       updateColorValues(mixedColor);
     }
@@ -507,18 +525,22 @@
       const grayColor = grayData[grayTypeKey];
       const baseWeight = baseIntensity / 100;
       const grayWeight = grayIntensity / 100;
+
       let r = (baseColor.r * baseWeight + grayColor.r * grayWeight) / (baseWeight + grayWeight);
       let g = (baseColor.g * baseWeight + grayColor.g * grayWeight) / (baseWeight + grayWeight);
       let b = (baseColor.b * baseWeight + grayColor.b * grayWeight) / (baseWeight + grayWeight);
+
       const brightnessFactor = brightness / 100;
       r = Math.max(0, Math.min(255, r + (255 - r) * brightnessFactor));
       g = Math.max(0, Math.min(255, g + (255 - g) * brightnessFactor));
       b = Math.max(0, Math.min(255, b + (255 - b) * brightnessFactor));
+
       const gray = (r + g + b) / 3;
       const saturationFactor = saturation / 100;
       r = Math.max(0, Math.min(255, gray + (r - gray) * (1 + saturationFactor)));
       g = Math.max(0, Math.min(255, gray + (g - gray) * (1 + saturationFactor)));
       b = Math.max(0, Math.min(255, gray + (b - gray) * (1 + saturationFactor)));
+
       return { r: Math.round(r), g: Math.round(g), b: Math.round(b) };
     }
 
@@ -534,41 +556,40 @@
 
     function rgbToHsl(r, g, b) {
       r /= 255; g /= 255; b /= 255;
-      const max = Math.max(r, g, b);
-      const min = Math.min(r, g, b);
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
       let h, s, l = (max + min) / 2;
-      if (max === min) h = s = 0;
+      const d = max - min;
+      s = l === 0 || l === 1 ? 0 : d / (l < 0.5 ? 2 * l : 2 - 2 * l);
+      if (!d) h = 0;
       else {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
         switch (max) {
-          case r: h = (g - b) / 6 / ((max - min) || 1); break;
-          case g: h = (b - r) / 6 / ((max - min) || 1) + 1/3; break;
-          case b: h = (r - g) / 6 / ((max - min) || 1) + 2/3; break;
+          case r: h = (g - b) / d % 6; break;
+          case g: h = (b - r) / d + 2; break;
+          case b: h = (r - g) / d + 4; break;
         }
-        if (h < 0) h += 1;
-        if (h > 1) h -= 1;
+        h = Math.round(h * 60);
+        if (h < 0) h += 360;
       }
-      return { h: h * 360, s: s * 100, l: l * 100 };
+      return { h, s: Math.round(s * 100), l: Math.round(l * 100) };
     }
 
     function rgbToHsv(r, g, b) {
       r /= 255; g /= 255; b /= 255;
-      const max = Math.max(r, g, b);
-      const min = Math.min(r, g, b);
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      let h, s, v = max;
       const d = max - min;
-      let h;
-      if (max === min) h = 0;
+      s = max === 0 ? 0 : d / max;
+      if (!d) h = 0;
       else {
         switch (max) {
-          case r: h = (g - b) / 6 / d + (g < b ? 1 : 0); break;
-          case g: h = (b - r) / 6 / d + 1/3; break;
-          case b: h = (r - g) / 6 / d + 2/3; break;
+          case r: h = (g - b) / 6 / s; break;
+          case g: h = (b - r) / 6 / s + 2; break;
+          case b: h = (r - g) / 6 / s + 4; break;
         }
-        h = (h + 1) % 1;
+        h = Math.round(h * 60);
+        if (h < 0) h += 360;
       }
-      const s = max === 0 ? 0 : d / max;
-      return { h: h * 360, s: s * 100, v: max * 100 };
+      return { h, s: Math.round(s * 100), v: Math.round(v * 100) };
     }
 
     function generatePresets() {
@@ -639,7 +660,6 @@
       updateSliderValues();
     }
 
-    // Copiar texto al hacer clic
     function copyText(id) {
       const text = document.getElementById(id).textContent;
       navigator.clipboard.writeText(text).then(() => {
