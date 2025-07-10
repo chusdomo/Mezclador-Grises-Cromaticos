@@ -35,19 +35,13 @@
       margin-bottom: 10px;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
-
-    @media (max-width: 768px) {
-      body {
-        transform: scale(1.5);
-        transform-origin: top left;
-        width: 100%;
-        overflow: hidden;
-      }
+    .header p {
+      font-size: 1.1em;
+      opacity: 0.9;
     }
-
     .main-content {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 30px;
       padding: 30px;
     }
@@ -56,6 +50,8 @@
       border-radius: 15px;
       padding: 25px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
     }
     .mixer-panel h3 {
       color: #2c3e50;
@@ -123,6 +119,19 @@
       text-align: center;
       font-weight: 600;
       color: #2c3e50;
+    }
+    .result-panel {
+      background: #f8f9fa;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .result-panel h3 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      font-size: 1.4em;
+      border-bottom: 3px solid #e74c3c;
+      padding-bottom: 10px;
     }
     .color-preview {
       width: 100%;
@@ -270,6 +279,8 @@
     }
     @media (max-width: 768px) {
       .main-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
         padding: 20px;
       }
     }
@@ -279,6 +290,7 @@
   <div class="container">
     <div class="header">
       <h1>🎨 Mezclador de Grises Cromáticos</h1>
+      <p>Experimenta con diferentes combinaciones de colores base y grises para crear tonos únicos</p>
     </div>
     <div class="main-content">
       <!-- Panel de mezcla -->
@@ -344,11 +356,29 @@
             <span class="slider-value" id="saturationValue">0</span>
           </div>
         </div>
+        <div class="buttons">
+          <button class="btn btn-primary" onclick="randomizeSettings()">🎲 Aleatorio</button>
+          <button class="btn btn-secondary" onclick="resetSettings()">🔄 Restablecer</button>
+        </div>
 
-        <!-- Vista previa del color -->
+        <!-- Consejos dentro del panel -->
+        <div class="tips-inline">
+          <h3>💡 Consejos para Mezclar Colores</h3>
+          <ul>
+            <li>Los grises cálidos funcionan mejor con rojos, amarillos y naranjas</li>
+            <li>Los grises fríos complementan azules, verdes y violetas</li>
+            <li>Usa intensidades bajas para efectos sutiles</li>
+            <li>Combina grises atmosféricos con cualquier color base</li>
+            <li>Experimenta con el brillo para crear profundidad</li>
+            <li>La saturación baja crea efectos más naturales</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Resultado -->
+      <div class="result-panel">
+        <h3>🎯 Resultado</h3>
         <div class="color-preview" id="colorPreview"></div>
-
-        <!-- Valores del color -->
         <div class="color-info">
           <h4>Valores de Color:</h4>
           <div class="color-values">
@@ -370,30 +400,9 @@
             </div>
           </div>
         </div>
-
-        <!-- Grises preestablecidos -->
         <div class="preset-grays">
           <h4>Grises Preestablecidos:</h4>
           <div class="preset-grid" id="presetGrid"></div>
-        </div>
-
-        <!-- Botones Aleatorio y Restablecer -->
-        <div class="buttons">
-          <button class="btn btn-primary" onclick="randomizeSettings()">🎲 Aleatorio</button>
-          <button class="btn btn-secondary" onclick="resetSettings()">🔄 Restablecer</button>
-        </div>
-
-        <!-- Consejos para mezclar colores -->
-        <div class="tips-inline">
-          <h3>💡 Consejos para Mezclar Colores</h3>
-          <ul>
-            <li>Los grises cálidos funcionan mejor con rojos, amarillos y naranjas</li>
-            <li>Los grises fríos complementan azules, verdes y violetas</li>
-            <li>Usa intensidades bajas para efectos sutiles</li>
-            <li>Combina grises atmosféricos con cualquier color base</li>
-            <li>Experimenta con el brillo para crear profundidad</li>
-            <li>La saturación baja crea efectos más naturales</li>
-          </ul>
         </div>
       </div>
     </div>
@@ -421,6 +430,7 @@
       'muted-dark': { r: 75, g: 80, b: 75 },
       'atmospheric': { r: 180, g: 185, b: 190 }
     };
+
     const baseColors = {
       'red': { r: 255, g: 0, b: 0 },
       'yellow': { r: 255, g: 255, b: 0 },
@@ -434,6 +444,7 @@
       updateSliderValues();
       updateColorPreview();
       generatePresets();
+
       document.getElementById('baseColor').addEventListener('change', updateColorPreview);
       document.getElementById('grayType').addEventListener('change', updateColorPreview);
       document.getElementById('baseIntensity').addEventListener('input', updateSliderValues);
@@ -457,6 +468,7 @@
       const grayIntensity = parseInt(document.getElementById('grayIntensity').value);
       const brightness = parseInt(document.getElementById('brightness').value);
       const saturation = parseInt(document.getElementById('saturation').value);
+
       const mixedColor = mixColors(baseColor, grayType, baseIntensity, grayIntensity, brightness, saturation);
       document.getElementById('colorPreview').style.backgroundColor = `rgb(${mixedColor.r}, ${mixedColor.g}, ${mixedColor.b})`;
       updateColorValues(mixedColor);
@@ -465,20 +477,25 @@
     function mixColors(baseColorKey, grayTypeKey, baseIntensity, grayIntensity, brightness, saturation) {
       const baseColor = baseColors[baseColorKey];
       const grayColor = grayData[grayTypeKey];
+
       const baseWeight = baseIntensity / 100;
       const grayWeight = grayIntensity / 100;
+
       let r = (baseColor.r * baseWeight + grayColor.r * grayWeight) / (baseWeight + grayWeight);
       let g = (baseColor.g * baseWeight + grayColor.g * grayWeight) / (baseWeight + grayWeight);
       let b = (baseColor.b * baseWeight + grayColor.b * grayWeight) / (baseWeight + grayWeight);
+
       const brightnessFactor = brightness / 100;
       r = Math.max(0, Math.min(255, r + (255 - r) * brightnessFactor));
       g = Math.max(0, Math.min(255, g + (255 - g) * brightnessFactor));
       b = Math.max(0, Math.min(255, b + (255 - b) * brightnessFactor));
+
       const gray = (r + g + b) / 3;
       const saturationFactor = saturation / 100;
       r = Math.max(0, Math.min(255, gray + (r - gray) * (1 + saturationFactor)));
       g = Math.max(0, Math.min(255, gray + (g - gray) * (1 + saturationFactor)));
       b = Math.max(0, Math.min(255, gray + (b - gray) * (1 + saturationFactor)));
+
       return { r: Math.round(r), g: Math.round(g), b: Math.round(b) };
     }
 
