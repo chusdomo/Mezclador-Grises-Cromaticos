@@ -15,9 +15,10 @@
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       padding: 20px;
+      font-size: 1.4em; /* Igual al texto de "Configuración del Mezclador" */
     }
     .container {
-      max-width: 1120px; /* 20% menos que 1400 */
+      max-width: 1120px;
       margin: 0 auto;
       background: white;
       border-radius: 20px;
@@ -26,12 +27,11 @@
     }
     @media (max-width: 768px) {
       .container {
-        max-width: 90%;
+        max-width: 108%; /* Aumentado en un 20% respecto al original (90%) */
         padding: 10px;
       }
       .main-content {
         padding: 15px;
-        font-size: 0.9em;
       }
       .slider-container {
         flex-direction: column;
@@ -56,7 +56,7 @@
       text-align: center;
     }
     .header h1 {
-      font-size: 2.5em;
+      font-size: 2.5em; /* Solo este título mantiene su tamaño grande */
       margin-bottom: 10px;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
@@ -67,6 +67,7 @@
       padding: 30px;
     }
     .mixer-panel {
+      width: 100%; /* Ocupa todo el ancho del container */
       background: #f8f9fa;
       border-radius: 15px;
       padding: 25px;
@@ -148,6 +149,7 @@
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
     .color-info {
+      width: 100%;
       background: white;
       border-radius: 10px;
       padding: 20px;
@@ -179,6 +181,7 @@
       color: #7f8c8d;
     }
     .preset-grays {
+      width: 100%;
       margin-top: 20px;
     }
     .preset-grays h4 {
@@ -188,7 +191,7 @@
     }
     .preset-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Ajustado para móvil */
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
       gap: 10px;
     }
     .preset-item {
@@ -216,12 +219,13 @@
       border: 2px solid #ddd;
     }
     .preset-name {
-      font-size: 0.9em; /* Mantener el tamaño del texto */
+      font-size: 0.9em;
       color: #2c3e50;
       font-weight: 600;
-      overflow-wrap: break-word; /* Permite que el texto se divida en líneas si es necesario */
+      overflow-wrap: break-word;
     }
     .buttons {
+      width: 100%;
       display: flex;
       gap: 15px;
       margin-top: 20px;
@@ -231,7 +235,7 @@
       padding: 12px 20px;
       border: none;
       border-radius: 10px;
-      font-size: 1em;
+      font-size: 1em; /* Botones mantienen su tamaño original */
       cursor: pointer;
       transition: all 0.3s;
       font-weight: 600;
