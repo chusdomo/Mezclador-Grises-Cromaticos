@@ -15,39 +15,14 @@
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       padding: 20px;
-      font-size: 1.4em; /* Igual al texto de "Configuración del Mezclador" */
     }
     .container {
-      max-width: 1120px;
+      max-width: 1400px;
       margin: 0 auto;
       background: white;
       border-radius: 20px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.1);
       overflow: hidden;
-    }
-    @media (max-width: 768px) {
-      .container {
-        max-width: 108%; /* Aumentado en un 20% respecto al original (90%) */
-        padding: 10px;
-      }
-      .main-content {
-        padding: 15px;
-      }
-      .slider-container {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .slider {
-        width: 100%;
-      }
-      .preset-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .tooltip-copy {
-        bottom: 10px;
-        right: 10px;
-        font-size: 0.8em;
-      }
     }
     .header {
       background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
@@ -56,10 +31,20 @@
       text-align: center;
     }
     .header h1 {
-      font-size: 2.5em; /* Solo este título mantiene su tamaño grande */
+      font-size: 2.5em;
       margin-bottom: 10px;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
+
+    @media (max-width: 768px) {
+      body {
+        transform: scale(1.5);
+        transform-origin: top left;
+        width: 100%;
+        overflow: hidden;
+      }
+    }
+
     .main-content {
       display: grid;
       grid-template-columns: 1fr;
@@ -67,7 +52,6 @@
       padding: 30px;
     }
     .mixer-panel {
-      width: 100%; /* Ocupa todo el ancho del container */
       background: #f8f9fa;
       border-radius: 15px;
       padding: 25px;
@@ -149,7 +133,6 @@
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
     .color-info {
-      width: 100%;
       background: white;
       border-radius: 10px;
       padding: 20px;
@@ -181,7 +164,6 @@
       color: #7f8c8d;
     }
     .preset-grays {
-      width: 100%;
       margin-top: 20px;
     }
     .preset-grays h4 {
@@ -191,7 +173,7 @@
     }
     .preset-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
       gap: 10px;
     }
     .preset-item {
@@ -202,10 +184,6 @@
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
       border: 2px solid #e0e0e0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
     }
     .preset-item:hover {
       transform: translateY(-2px);
@@ -219,13 +197,11 @@
       border: 2px solid #ddd;
     }
     .preset-name {
-      font-size: 0.9em;
+      font-size: 0.8em;
       color: #2c3e50;
       font-weight: 600;
-      overflow-wrap: break-word;
     }
     .buttons {
-      width: 100%;
       display: flex;
       gap: 15px;
       margin-top: 20px;
@@ -235,7 +211,7 @@
       padding: 12px 20px;
       border: none;
       border-radius: 10px;
-      font-size: 1em; /* Botones mantienen su tamaño original */
+      font-size: 1em;
       cursor: pointer;
       transition: all 0.3s;
       font-weight: 600;
@@ -291,6 +267,11 @@
     }
     .tooltip-copy.show {
       opacity: 1;
+    }
+    @media (max-width: 768px) {
+      .main-content {
+        padding: 20px;
+      }
     }
   </style>
 </head>
@@ -363,8 +344,10 @@
             <span class="slider-value" id="saturationValue">0</span>
           </div>
         </div>
+
         <!-- Vista previa del color -->
         <div class="color-preview" id="colorPreview"></div>
+
         <!-- Valores del color -->
         <div class="color-info">
           <h4>Valores de Color:</h4>
@@ -387,17 +370,20 @@
             </div>
           </div>
         </div>
+
         <!-- Grises preestablecidos -->
         <div class="preset-grays">
           <h4>Grises Preestablecidos:</h4>
           <div class="preset-grid" id="presetGrid"></div>
         </div>
+
         <!-- Botones Aleatorio y Restablecer -->
         <div class="buttons">
           <button class="btn btn-primary" onclick="randomizeSettings()">🎲 Aleatorio</button>
           <button class="btn btn-secondary" onclick="resetSettings()">🔄 Restablecer</button>
         </div>
-        <!-- Consejos -->
+
+        <!-- Consejos para mezclar colores -->
         <div class="tips-inline">
           <h3>💡 Consejos para Mezclar Colores</h3>
           <ul>
@@ -412,8 +398,10 @@
       </div>
     </div>
   </div>
+
   <!-- Tooltip de copiado -->
   <div id="copyTooltip" class="tooltip-copy">Copiado</div>
+
   <script>
     const grayData = {
       'warm-light': { r: 210, g: 208, b: 200 },
@@ -441,6 +429,7 @@
       'orange': { r: 255, g: 165, b: 0 },
       'violet': { r: 138, g: 43, b: 226 }
     };
+
     function init() {
       updateSliderValues();
       updateColorPreview();
@@ -452,6 +441,7 @@
       document.getElementById('brightness').addEventListener('input', updateSliderValues);
       document.getElementById('saturation').addEventListener('input', updateSliderValues);
     }
+
     function updateSliderValues() {
       document.getElementById('baseIntensityValue').textContent = document.getElementById('baseIntensity').value + '%';
       document.getElementById('grayIntensityValue').textContent = document.getElementById('grayIntensity').value + '%';
@@ -459,17 +449,19 @@
       document.getElementById('saturationValue').textContent = document.getElementById('saturation').value;
       updateColorPreview();
     }
+
     function updateColorPreview() {
-      const baseColorKey = document.getElementById('baseColor').value;
-      const grayTypeKey = document.getElementById('grayType').value;
+      const baseColor = document.getElementById('baseColor').value;
+      const grayType = document.getElementById('grayType').value;
       const baseIntensity = parseInt(document.getElementById('baseIntensity').value);
       const grayIntensity = parseInt(document.getElementById('grayIntensity').value);
       const brightness = parseInt(document.getElementById('brightness').value);
       const saturation = parseInt(document.getElementById('saturation').value);
-      const mixedColor = mixColors(baseColorKey, grayTypeKey, baseIntensity, grayIntensity, brightness, saturation);
+      const mixedColor = mixColors(baseColor, grayType, baseIntensity, grayIntensity, brightness, saturation);
       document.getElementById('colorPreview').style.backgroundColor = `rgb(${mixedColor.r}, ${mixedColor.g}, ${mixedColor.b})`;
       updateColorValues(mixedColor);
     }
+
     function mixColors(baseColorKey, grayTypeKey, baseIntensity, grayIntensity, brightness, saturation) {
       const baseColor = baseColors[baseColorKey];
       const grayColor = grayData[grayTypeKey];
@@ -489,6 +481,7 @@
       b = Math.max(0, Math.min(255, gray + (b - gray) * (1 + saturationFactor)));
       return { r: Math.round(r), g: Math.round(g), b: Math.round(b) };
     }
+
     function updateColorValues(color) {
       const hex = '#' + [color.r, color.g, color.b].map(x => x.toString(16).padStart(2, '0')).join('');
       document.getElementById('hexValue').textContent = hex;
@@ -498,42 +491,46 @@
       const hsv = rgbToHsv(color.r, color.g, color.b);
       document.getElementById('hsvValue').textContent = `${Math.round(hsv.h)}°, ${Math.round(hsv.s)}%, ${Math.round(hsv.v)}%`;
     }
+
     function rgbToHsl(r, g, b) {
       r /= 255; g /= 255; b /= 255;
-      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
       let h, s, l = (max + min) / 2;
-      const d = max - min;
-      s = l === 0 || l === 1 ? 0 : d / (l < 0.5 ? 2 * l : 2 - 2 * l);
-      if (!d) h = 0;
+      if (max === min) h = s = 0;
       else {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
         switch (max) {
-          case r: h = (g - b) / d % 6; break;
-          case g: h = (b - r) / d + 2; break;
-          case b: h = (r - g) / d + 4; break;
+          case r: h = (g - b) / 6 / ((max - min) || 1); break;
+          case g: h = (b - r) / 6 / ((max - min) || 1) + 1/3; break;
+          case b: h = (r - g) / 6 / ((max - min) || 1) + 2/3; break;
         }
-        h = Math.round(h * 60);
-        if (h < 0) h += 360;
+        if (h < 0) h += 1;
+        if (h > 1) h -= 1;
       }
-      return { h, s: Math.round(s * 100), l: Math.round(l * 100) };
+      return { h: h * 360, s: s * 100, l: l * 100 };
     }
+
     function rgbToHsv(r, g, b) {
       r /= 255; g /= 255; b /= 255;
-      const max = Math.max(r, g, b), min = Math.min(r, g, b);
-      let h, s, v = max;
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
       const d = max - min;
-      s = max === 0 ? 0 : d / max;
-      if (!d) h = 0;
+      let h;
+      if (max === min) h = 0;
       else {
         switch (max) {
-          case r: h = (g - b) / 6 / s; break;
-          case g: h = (b - r) / 6 / s + 2; break;
-          case b: h = (r - g) / 6 / s + 4; break;
+          case r: h = (g - b) / 6 / d + (g < b ? 1 : 0); break;
+          case g: h = (b - r) / 6 / d + 1/3; break;
+          case b: h = (r - g) / 6 / d + 2/3; break;
         }
-        h = Math.round(h * 60);
-        if (h < 0) h += 360;
+        h = (h + 1) % 1;
       }
-      return { h, s: Math.round(s * 100), v: Math.round(v * 100) };
+      const s = max === 0 ? 0 : d / max;
+      return { h: h * 360, s: s * 100, v: max * 100 };
     }
+
     function generatePresets() {
       const presetGrid = document.getElementById('presetGrid');
       presetGrid.innerHTML = '';
@@ -548,6 +545,7 @@
         presetGrid.appendChild(presetItem);
       });
     }
+
     function getGrayName(grayType) {
       const names = {
         'warm-light': 'Cálido Claro',
@@ -569,6 +567,7 @@
       };
       return names[grayType] || grayType;
     }
+
     function loadPreset(grayType) {
       document.getElementById('grayType').value = grayType;
       document.getElementById('baseIntensity').value = 30;
@@ -577,6 +576,7 @@
       document.getElementById('saturation').value = 0;
       updateSliderValues();
     }
+
     function randomizeSettings() {
       const baseColors = ['red', 'yellow', 'blue', 'green', 'orange', 'violet'];
       const grayTypes = Object.keys(grayData);
@@ -588,6 +588,7 @@
       document.getElementById('saturation').value = Math.floor(Math.random() * 101) - 50;
       updateSliderValues();
     }
+
     function resetSettings() {
       document.getElementById('baseColor').value = 'red';
       document.getElementById('grayType').value = 'neutral-medium';
@@ -597,6 +598,8 @@
       document.getElementById('saturation').value = 0;
       updateSliderValues();
     }
+
+    // Copiar texto al hacer clic
     function copyText(id) {
       const text = document.getElementById(id).textContent;
       navigator.clipboard.writeText(text).then(() => {
@@ -606,6 +609,7 @@
         setTimeout(() => tooltip.classList.remove('show'), 1500);
       }).catch(err => alert("Error al copiar: " + err));
     }
+
     window.onload = init;
   </script>
 </body>
