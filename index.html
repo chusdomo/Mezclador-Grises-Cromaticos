@@ -140,6 +140,7 @@
       margin-bottom: 20px;
       border: 3px solid #ddd;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      position: relative;
     }
     .color-info {
       background: white;
@@ -363,28 +364,10 @@
       <!-- Resultado -->
       <div class="result-panel">
         <h3>🎯 Resultado</h3>
-        <div class="color-preview" id="colorPreview"></div>
-        <div class="color-info">
-          <h4>Valores de Color:</h4>
-          <div class="color-values">
-            <div class="color-value" onclick="copyText('hexValue')">
-              <strong>HEX</strong>
-              <span id="hexValue">#808080</span>
-            </div>
-            <div class="color-value" onclick="copyText('rgbValue')">
-              <strong>RGB</strong>
-              <span id="rgbValue">128, 128, 128</span>
-            </div>
-            <div class="color-value" onclick="copyText('hslValue')">
-              <strong>HSL</strong>
-              <span id="hslValue">0°, 0%, 50%</span>
-            </div>
-            <div class="color-value" onclick="copyText('hsvValue')">
-              <strong>HSV</strong>
-              <span id="hsvValue">0°, 0%, 50%</span>
-            </div>
-          </div>
+        <div class="color-preview" id="colorPreview">
+          <div id="hexDisplay" onclick="copyHexValue()" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; font-weight: bold; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.7); cursor: pointer; user-select: none;">#808080</div>
         </div>
+        
         <div class="preset-grays">
           <h4>Grises Preestablecidos:</h4>
           <div class="preset-grid" id="presetGrid"></div>
@@ -501,12 +484,7 @@
 
     function updateColorValues(color) {
       const hex = '#' + [color.r, color.g, color.b].map(x => x.toString(16).padStart(2, '0')).join('');
-      document.getElementById('hexValue').textContent = hex;
-      document.getElementById('rgbValue').textContent = `${color.r}, ${color.g}, ${color.b}`;
-      const hsl = rgbToHsl(color.r, color.g, color.b);
-      document.getElementById('hslValue').textContent = `${Math.round(hsl.h)}°, ${Math.round(hsl.s)}%, ${Math.round(hsl.l)}%`;
-      const hsv = rgbToHsv(color.r, color.g, color.b);
-      document.getElementById('hsvValue').textContent = `${Math.round(hsv.h)}°, ${Math.round(hsv.s)}%, ${Math.round(hsv.v)}%`;
+      document.getElementById('hexDisplay').textContent = hex;
     }
 
     function rgbToHsl(r, g, b) {
@@ -614,6 +592,16 @@
       document.getElementById('brightness').value = 0;
       document.getElementById('saturation').value = 0;
       updateSliderValues();
+    }
+
+    function copyHexValue() {
+      const hex = document.getElementById('hexDisplay').textContent;
+      navigator.clipboard.writeText(hex).then(() => {
+        const tooltip = document.getElementById('copyTooltip');
+        tooltip.textContent = `Copiado: ${hex}`;
+        tooltip.classList.add('show');
+        setTimeout(() => tooltip.classList.remove('show'), 1500);
+      }).catch(err => alert("Error al copiar: " + err));
     }
 
     // Copiar texto al hacer clic
