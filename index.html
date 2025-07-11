@@ -27,6 +27,7 @@
   border-radius: 20px;
   box-shadow: 0 20px 40px rgba(0,0,0,0.1);
   overflow: hidden;
+  overflow-x: hidden;
 }
     .header {
       background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
@@ -294,12 +295,51 @@
      .preset-item {
        height: 40px;
      }
+     .container {
+       margin: 0;
+       border-radius: 0;
+     }
+     .slider-container {
+       gap: 10px;
+     }
+     .slider-value {
+       min-width: 40px;
+       font-size: 0.9em;
+     }
     }
+ * {
+  max-width: 100%;
+  box-sizing: border-box;
+ }
+
+ .mixer-panel, .result-panel {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+ }
+
+ .color-values {
+  width: 100%;
+  max-width: 100%;
+ }
+
+ .preset-grid {
+  width: 100%;
+  max-width: 100%;
+ }
 Esto hará que:
 
 En PC: altura 50px (25% más que los 40px originales)
 En móvil: altura 40px (como estaba perfecto)
 ¡Listo!
+@media (max-width: 480px) {
+ .main-content {
+   padding: 15px;
+ }
+ .mixer-panel, .result-panel {
+   padding: 20px;
+ }
+}
 
 
 
