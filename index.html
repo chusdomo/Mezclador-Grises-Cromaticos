@@ -190,28 +190,23 @@
       gap: 10px;
     }
     .preset-item {
-      background: white;
       border-radius: 10px;
       padding: 10px;
       text-align: center;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
       border: 2px solid #e0e0e0;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .preset-item:hover {
       transform: translateY(-2px);
       box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
-    .preset-color {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      margin: 0 auto 8px;
-      border: 2px solid #ddd;
-    }
     .preset-name {
       font-size: 1em;
-      color: #2c3e50;
       font-weight: 600;
     }
     .buttons {
@@ -538,9 +533,9 @@ html {
         const presetItem = document.createElement('div');
         presetItem.className = 'preset-item';
         presetItem.onclick = () => loadPreset(grayType);
-        presetItem.innerHTML = `
-          <div class="preset-color" style="background-color: rgb(${grayColor.r}, ${grayColor.g}, ${grayColor.b})"></div>
-          <div class="preset-name">${getGrayName(grayType)}</div>`;
+        const textColor = (grayColor.r + grayColor.g + grayColor.b) / 3 > 128 ? '#000000' : '#ffffff';
+        presetItem.style.backgroundColor = `rgb(${grayColor.r}, ${grayColor.g}, ${grayColor.b})`;
+        presetItem.innerHTML = `<div class="preset-name" style="color: ${textColor}">${getGrayName(grayType)}</div>`;
         presetGrid.appendChild(presetItem);
       });
     }
